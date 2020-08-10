@@ -92,7 +92,7 @@ function! s:vimwiki_get_paths_and_extensions()
     let wikis[ext] = 1
   endfor
   " combine exts and paths
-  for key in keys(wikis)
+  for ext in keys(wikis)
     let wikis[ext] = keys(paths)
   endfor
   return wikis
