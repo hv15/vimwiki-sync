@@ -58,7 +58,7 @@ function! s:commit(path, msg) abort
   echomsg "Vimwiki: committing '" . a:msg . "'"
   let l:cmdmsg = system ("git -C " . a:path . " commit -m 'Auto commit: " . a:msg . "'")
   if v:shell_error
-    echo "Unable to commit file " . a:file . ", error msg: " . l:cmdmsg
+    echo "Unable to commit file (gitpath: " . a:path . "cwd: " . getcwd() . "), error msg: " . l:cmdmsg
   else
     let s:vimwiki_changes = 1
     if s:vimwiki_push_on_commit == 1
@@ -70,7 +70,7 @@ endfunction
 function! s:commit_changes(path, file) abort
   let l:cmdmsg = system ("git -C " . a:path . " add " . a:file)
   if v:shell_error
-    echo "Unable to add file " . a:file . ", error msg: " . l:cmdmsg
+    echo "Unable to add file " . a:file . " (gitpath: " . a:path . "cwd: " . getcwd() . "), error msg: " . l:cmdmsg
   else
     call s:commit(a:path, "file " . a:file)
   endif
@@ -106,7 +106,7 @@ augroup vimwiki
       " sync changes at the start
       exe 'autocmd VimEnter,BufRead '.s:path.'*'.s:ext.' call s:pull_changes("'.s:path.'")'
       " auto commit changes on each file change
-      exe 'autocmd BufWritePost '.s:path.'*'.s:ext.' call s:commit_changes("'.s:path.'", expand("<amatch>:."))'
+      exe 'autocmd BufWritePost '.s:path.'*'.s:ext.' call s:commit_changes("'.s:path.'", expand("<amatch>:t"))'
       " push changes only on at the end
       exe 'autocmd VimLeave,BufLeave '.s:path.'*'.s:ext.' call s:push_changes("'.s:path.'")'
     endfor
